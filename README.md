@@ -26,8 +26,6 @@ Ce projet inclut un système de profil utilisateur, la gestion des offres favori
 - Système de filtres dynamiques avec tags.
 - Bouton **Clear** pour réinitialiser les filtres.
 
-### 📊 Statistiques
-- Section affichant des statistiques générales sur les offres (chargement dynamique prévu en JavaScript).
 
 ### 🪟 Modales interactives
 - **Modal “Détails de l’offre”** : affiche les informations complètes d’une offre sélectionnée.  
@@ -47,14 +45,14 @@ Ce projet inclut un système de profil utilisateur, la gestion des offres favori
 
 - **HTML5** — Structure de la page et accessibilité.  
 - **CSS3** — Mise en forme et responsive design.  
-- **JavaScript (ES6)** — Gestion dynamique du contenu et interactions utilisateur.  
-- **Google Fonts** — Police “League Spartan”.
+- **JavaScript vanilla ** — Gestion dynamique du contenu et interactions utilisateur.  
+
 
 ---
 
 ## 💡 Fonctionnement prévu du script `starter.js`
 
-Bien que le script ne soit pas fourni, voici les fonctionnalités qu’il devrait implémenter :
+
 
 1. **Gestion des onglets (Profil, Favoris, Gérer)**  
    → Afficher/masquer le contenu associé à chaque onglet.
