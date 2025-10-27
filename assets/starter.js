@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showError = (input, message) => {
         // TODO: Implement error display logic
         // 1. Add error class to input
-        
+
         // 2. Find error span element
         // 3. Display error message
     };
@@ -546,6 +546,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyAllFilters = () => {
         // TODO: Implement comprehensive filtering
         // 1. Get search term
+        loadAllJobs();
+        searchInput.addEventListener('input' , (e) =>{
+            const inputValue = e.target.value;
+            console.log(inputValue);
+            
+            // let jobs = allJobs.json();
+          const finded = allJobs.filter(item => item.company.toLowerCase().includes(inputValue.toLowerCase())  );
+          console.log("find" , finded);
+        
+        })
         // 2. Combine profile skills and manual filters
         // 3. Filter jobs by tags and search term
         // 4. Update all UI components
