@@ -137,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showError = (input, message) => {
         // TODO: Implement error display logic
         // 1. Add error class to input
+        
         // 2. Find error span element
         // 3. Display error message
     };
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const clearErrors = (form) => {
         // TODO: Implement error clearing logic
-        // 1. Remove error classes from inputs
+        // 1. Remove error classes from inputs0
         // 2. Clear error messages
     };
 
