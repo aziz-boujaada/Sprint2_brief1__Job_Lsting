@@ -53,6 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const profilePositionInput = document.getElementById("profile-position");
   const skillInput = document.getElementById("skill-input");
   const profileSkillsList = document.getElementById("profile-skills-list");
+  const SaveProfileBtn = document.querySelector(".profile-form__save-btn");
+  const formErrors = document.querySelectorAll(".form-error");
 
   // DOM Elements - Tabs
   const tabsNav = document.querySelector(".tabs-nav");
@@ -166,8 +168,26 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. Check required fields
     // 2. Show errors if invalid
     // 3. Return validation result
-    return true;
+    SaveProfileBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const pattern = /^[A-Za-z\s]+$/;
+
+      if (profileNameInput.value == "") {
+        // console.log("empty fieldes" )
+        formErrors[0].innerHTML = "require fieldes";
+        formErrors[0].style.display = "block";
+      } else if (!pattern.test(profileNameInput.value)) {
+        formErrors[0].innerHTML = "name must be contain letters only";
+        formErrors[0].style.display = "block";
+      } else {
+        formErrors[0].innerHTML = "";
+        formErrors[0].style.display = "none";
+      }
+      console.log(formErrors);
+    });
+    // return true;
   };
+  validateProfileForm();
 
   /**
    * Validates the job management form
@@ -436,17 +456,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const renderManageList = () => {
     // TODO: Implement manage list rendering
     // Use this HTML template for each job:
-    // `<li class="manage-job-item" data-job-id="${job.id}">
-    //     <img src="${job.logo}" alt="" class="job-card__logo" style="position: static; width: 48px; height: 48px; border-radius: 5px;">
-    //     <div class="manage-job-item__info">
-    //         <h4>${job.position}</h4>
-    //         <p>${job.company} - ${job.location}</p>
-    //     </div>
-    //     <div class="manage-job-item__actions">
-    //         <button class="btn btn--secondary btn-edit">Edit</button>
-    //         <button class="btn btn--danger btn-delete">Delete</button>
-    //     </div>
-    //  </li>`
+    `<li class="manage-job-item" data-job-id="${job.id}">
+        <img src="${job.logo}" alt="" class="job-card__logo" style="position: static; width: 48px; height: 48px; border-radius: 5px;">
+        <div class="manage-job-item__info">
+            <h4>${job.position}</h4>
+            <p>${job.company} - ${job.location}</p>
+        </div>
+        <div class="manage-job-item__actions">
+            <button class="btn btn--secondary btn-edit">Edit</button>
+            <button class="btn btn--danger btn-delete">Delete</button>
+        </div>
+     </li>`;
   };
 
   /**
@@ -457,7 +477,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleManageFormSubmit = (e) => {
     // TODO: Implement job save logic
     // 1. Prevent default submission
+    e.preventDefault();
     // 2. Validate form
+
     // 3. Create job data object
     // 4. Add new job or update existing
     // 5. Save to localStorage
@@ -598,13 +620,14 @@ document.addEventListener("DOMContentLoaded", () => {
         (item) =>
           item.company.toLowerCase().includes(inputValue.toLowerCase()) ||
           item.position.toLowerCase().includes(inputValue.toLowerCase()) ||
-          item.skills.find(skill => skill.toLowerCase().includes(inputValue.toLowerCase()))
+          item.skills.find((skill) =>
+            skill.toLowerCase().includes(inputValue.toLowerCase())
+          )
       );
-    //   console.log("jobs", allJobs);
-    //   console.log("find ", finded);
+      //   console.log("jobs", allJobs);
+      //   console.log("find ", finded);
 
       renderJobs(finded);
-
     });
     // 2. Combine profile skills and manual filters
     // 3. Filter jobs by tags and search term
@@ -635,7 +658,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleFilterBarClick = (e) => {
     // TODO: Implement filter removal
     // Handle clicks on filter tag remove buttons
+    clearFiltersBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      console.log("clear btn  clicked ");
+      renderJobs(allJobs);
+    });
   };
+  handleFilterBarClick();
 
   /**
    * Clears all manual filters
