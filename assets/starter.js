@@ -338,26 +338,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // console.log(favoriteJobBtn)
     //  favoriteJobBtn.forEach(favBtn => {
     // console.log(favoriteJobBtn)
-    Array.from(favoriteJobBtn).forEach((btn) => {
-      let favIconId = Number(btn.getAttribute("data-job-id"));
+   for(let btn of favoriteJobBtn) {
       //  console.log("fav id " , favIcon)
-      btn.addEventListener("click", () => {
-        btn.classList.toggle("job-card__favorite-btn--active")
-        ? (favoriteJobsContainer.innerHTML = "hello")
-        : (favoriteJobsContainer.innerHTML = "");
+      btn.addEventListener("click", (e) => {
+        let favIconId = Number(e.target.getAttribute("data-job-id"));
         console.log(favIconId)
-        favoriteJobIds.push(favIconId);
-        console.log(favoriteJobIds)
 
-        // favoriteJobIds = favoriteJobIds.filter(id => id.includes(favIconId));
-        // if(favoriteJobIds === favIconId){
-        //     favoriteJobsContainer.innerHTML = ""
-        // }else{
-          
-        // }
+        
+        if(favoriteJobIds.includes(favIconId)){
+          favoriteJobIds = favoriteJobIds.filter(id => id != favIconId);
+          btn.classList.remove("job-card__favorite-btn--active")
+          favoriteJobsContainer.innerHTML = ""
+        }else{
+          btn.classList.add("job-card__favorite-btn--active")
+          favoriteJobIds.push(favIconId);
+          for (let i = 0; i < allJobs.length; i++) {
+            if (allJobs[i].id === favIconId) {
+              favoriteJobsContainer.innerHTML += createJobCardHTML(allJobs[i]) ;
+              break;
+            }
+          }
+        }
+
+        console.log(favoriteJobIds)
         // btn.style.color = "red"
       });
-    });
+    };
     // //  })
     // 2. Use createJobCardHTML for each job
     // 3. Show empty message if no favorites
