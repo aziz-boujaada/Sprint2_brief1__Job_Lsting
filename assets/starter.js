@@ -64,7 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const favoriteJobsContainer = document.getElementById(
     "favorite-jobs-container"
   );
+  
   const favoritesCount = document.getElementById("favorites-count");
+  const favoriteJobBtn = document.getElementsByClassName(
+    "job-card__favorite-btn"
+  );
+  const jobCard = document.querySelectorAll(".job-card");
 
   // DOM Elements - Job Management
   const manageJobsList = document.getElementById("manage-jobs-list");
@@ -173,18 +178,26 @@ document.addEventListener("DOMContentLoaded", () => {
       const pattern = /^[A-Za-z\s]+$/;
 
       if (profileNameInput.value == "") {
-        // console.log("empty fieldes" )
-        formErrors[0].innerHTML = "require fieldes";
+        formErrors[0].innerHTML = "enter something ";
         formErrors[0].style.display = "block";
       } else if (!pattern.test(profileNameInput.value)) {
         formErrors[0].innerHTML = "name must be contain letters only";
+        formErrors[0].style.display = "block";
+      } else if (profileNameInput.value.length < 4) {
+        formErrors[0].innerHTML = "name short enter a name grater than 4 char ";
         formErrors[0].style.display = "block";
       } else {
         formErrors[0].innerHTML = "";
         formErrors[0].style.display = "none";
       }
       console.log(formErrors);
+
+      if (profilePositionInput == "") {
+        formErrors[1].innerHTML = "require fieldes";
+        formErrors[1].style.display = "block";
+      }
     });
+    console.log("error", formErrors[1]);
     // return true;
   };
   validateProfileForm();
@@ -317,10 +330,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const renderFavoriteJobs = () => {
     // TODO: Implement favorites rendering
     // 1. Filter jobs by favorite IDs
+    // const favIcon = jobCard.forEach( job => {
+    //   job.target.data-job-id ;
+
+    //   console.log(favIcon)
+    // })
+    // console.log(favoriteJobBtn)
+    //  favoriteJobBtn.forEach(favBtn => {
+    // console.log(favoriteJobBtn)
+    Array.from(favoriteJobBtn).forEach((btn) => {
+      let favIconId = Number(btn.getAttribute("data-job-id"));
+      //  console.log("fav id " , favIcon)
+      btn.addEventListener("click", () => {
+        btn.classList.toggle("job-card__favorite-btn--active")
+        ? (favoriteJobsContainer.innerHTML = "hello")
+        : (favoriteJobsContainer.innerHTML = "");
+        console.log(favIconId)
+        favoriteJobIds.push(favIconId);
+        console.log(favoriteJobIds)
+
+        // favoriteJobIds = favoriteJobIds.filter(id => id.includes(favIconId));
+        // if(favoriteJobIds === favIconId){
+        //     favoriteJobsContainer.innerHTML = ""
+        // }else{
+          
+        // }
+        // btn.style.color = "red"
+      });
+    });
+    // //  })
     // 2. Use createJobCardHTML for each job
     // 3. Show empty message if no favorites
   };
-
+  renderFavoriteJobs();
   /**
    * Toggles job favorite status
    * @function toggleFavorite
