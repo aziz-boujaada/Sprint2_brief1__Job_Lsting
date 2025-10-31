@@ -338,52 +338,59 @@ document.addEventListener("DOMContentLoaded", () => {
     // console.log(favoriteJobBtn)
     //  favoriteJobBtn.forEach(favBtn => {
     // console.log(favoriteJobBtn)
-    const renderFav = () =>{
-      favoriteJobsContainer.innerHTML = favoriteJobIds
-      .map((id) => {
-        const job = allJobs.find((job) => job.id === id);
-        return createJobCardHTML(job);
-      })
-      
-    }
     for (let btn of favoriteJobBtn) {
       //  console.log("fav id " , favIcon)
       btn.addEventListener("click", (e) => {
-        let favIconId = Number(e.target.getAttribute("data-job-id"));
-        console.log("ids", favIconId);
+        let jobId = Number(e.target.getAttribute("data-job-id"));
 
-        const idIndex = favoriteJobIds.indexOf(favIconId);
-
-        if (idIndex > -1) {
-          favoriteJobIds.splice(idIndex, 1);
-          btn.classList.remove("job-card__favorite-btn--active");
-        }
-        // console.log("to remove", jobtoremove);
-        else {
-          favoriteJobIds.push(favIconId);
-          btn.classList.add("job-card__favorite-btn--active");
-        }
-          renderFav()
-        console.log(favoriteJobIds);
-        // btn.style.color = "red"
+        toggleFavorite(jobId, e.target);
       });
     }
-    // //  })
-    // 2. Use createJobCardHTML for each job
-    // 3. Show empty message if no favorites
+    if (favoriteJobIds.length === 0) {
+      favoriteJobsContainer.innerHTML = `<p style = "text-align :center; color :red ;">There is No jobs in Favourit</p>`;
+    } else {
+      favoriteJobsContainer.innerHTML += favoriteJobIds.map((jobId) => {
+        const job = allJobs.find((job) => job.id === jobId);
+        createJobCardHTML(job);
+        // toggleFavorite(jobId)
+      });
+    }
   };
-  
+  // 2. Use createJobCardHTML for each job
+  // 3. Show empty message if no favorites
+
   /**
    * Toggles job favorite status
    * @function toggleFavorite
    * @param {number} jobId - Job ID to toggle
    */
-  const toggleFavorite = (jobId) => {
+  const toggleFavorite = (jobId, button) => {
     // TODO: Implement favorite toggle
     // 1. Check if job is already favorite
     // 2. Add or remove from favorites array
     // 3. Save to localStorage
     // 4. Update UI
+
+    console.log("ids", jobId);
+
+    const idIndex = favoriteJobIds.indexOf(jobId);
+
+    if (idIndex > -1) {
+      button.classList.remove("job-card__favorite-btn--active");
+      favoriteJobIds.splice(idIndex, 1);
+      const jobToremove = favoriteJobsContainer.querySelector(
+        `[data-job-id ="${jobId}"]`
+      );
+      jobToremove.remove();
+    }
+    // console.log("to remove", jobtoremove);
+    else {
+      favoriteJobIds.push(jobId);
+      favoriteJobsContainer.innerHTML += createJobCardHTML(allJobs[jobId - 1]);
+      button.classList.add("job-card__favorite-btn--active");
+    }
+
+    console.log(favoriteJobIds);
   };
 
   // ------------------------------------
