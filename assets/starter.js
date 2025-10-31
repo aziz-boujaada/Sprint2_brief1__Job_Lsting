@@ -321,6 +321,8 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   const renderFavoritesCount = () => {
     // TODO: Update favorites count in tab
+    favoritesCount.textContent = favoriteJobIds.length;
+    console.log("lenght", favoriteJobIds.length);
   };
 
   /**
@@ -338,23 +340,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // console.log(favoriteJobBtn)
     //  favoriteJobBtn.forEach(favBtn => {
     // console.log(favoriteJobBtn)
+    // if (favoriteJobIds.length === 0) {
+    //   favoriteJobsContainer.innerHTML = `<p style = "text-align :center; color :red ;">There is No jobs in Favourit</p>`;
+
+    // }else{
+    //   // favoriteJobsContainer.innerHTML = ""
+    // }
+
     for (let btn of favoriteJobBtn) {
       //  console.log("fav id " , favIcon)
       btn.addEventListener("click", (e) => {
         let jobId = Number(e.target.getAttribute("data-job-id"));
-
         toggleFavorite(jobId, e.target);
       });
     }
-    if (favoriteJobIds.length === 0) {
-      favoriteJobsContainer.innerHTML = `<p style = "text-align :center; color :red ;">There is No jobs in Favourit</p>`;
-    } else {
-      favoriteJobsContainer.innerHTML += favoriteJobIds.map((jobId) => {
-        const job = allJobs.find((job) => job.id === jobId);
-        createJobCardHTML(job);
-        // toggleFavorite(jobId)
-      });
-    }
+
+    renderFavoritesCount();
   };
   // 2. Use createJobCardHTML for each job
   // 3. Show empty message if no favorites
@@ -386,11 +387,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // console.log("to remove", jobtoremove);
     else {
       favoriteJobIds.push(jobId);
-      favoriteJobsContainer.innerHTML += createJobCardHTML(allJobs[jobId - 1]);
       button.classList.add("job-card__favorite-btn--active");
+
+      favoriteJobsContainer.innerHTML = favoriteJobIds
+        .map((jobId) => {
+          const job = allJobs.find((job) => job.id === jobId);
+          return createJobCardHTML(job);
+        })
+        .join("");
     }
 
     console.log(favoriteJobIds);
+    renderFavoritesCount();
+    renderFavoriteJobs();
   };
 
   // ------------------------------------
@@ -632,6 +641,8 @@ document.addEventListener("DOMContentLoaded", () => {
       jobsToRender.length > 0
         ? jobsToRender.map(createJobCardHTML).join("")
         : '<p class="job-listings__empty">No jobs match your search.</p>';
+    renderFavoriteJobs();
+    renderStats()
   };
 
   /**
@@ -656,6 +667,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const renderStats = (matchCount, totalCount) => {
     // TODO: Implement stats rendering
     // Show different messages based on active filters
+
+  
+   totalCount = allJobs.length
+   
+    console.log(" match", matchCount);
+    console.log(" total ", totalCount);
+
+    statsCounter.textContent = `found ${matchCount} from ${totalCount} jobs`;
   };
 
   // ------------------------------------
@@ -672,7 +691,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadAllJobs();
     searchInput.addEventListener("input", (e) => {
       const inputValue = e.target.value;
-      console.log(inputValue);
 
       // let jobs = allJobs.json();
       const finded = allJobs.filter(
@@ -685,9 +703,14 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       //   console.log("jobs", allJobs);
       //   console.log("find ", finded);
-
+      // console.log("matched" , matchCount)
+      
       renderJobs(finded);
+      const matchCount = finded.length;
+      renderStats(matchCount);
     });
+    // renderFavoriteJobs()
+
     // 2. Combine profile skills and manual filters
     // 3. Filter jobs by tags and search term
     // 4. Update all UI components
@@ -765,7 +788,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupTabs();
     applyAllFilters();
 
-    // Modal events
+    // Modal events()
     viewModalCloseBtn.addEventListener("click", closeViewModal);
     viewModal.addEventListener("click", (e) => {
       if (e.target === viewModal) closeViewModal();
