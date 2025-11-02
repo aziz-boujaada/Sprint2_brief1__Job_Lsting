@@ -634,20 +634,31 @@ const handleManageFormSubmit = () => {
     };
      renderManageList(dataJob)
 
-
+     allJobs.push(dataJob)
     console.log(dataJob);
     
+    // 3. Create job data object
+    
+    // 4. Add new job or update existing
+     const DeletJobBtn = document.querySelectorAll(".btn-delete")
+     for(let btn of DeletJobBtn){
+       btn.addEventListener('click' ,(e)=>{
+         e.preventDefault()
+          const indexToRemove = allJobs.findIndex((job) => job === dataJob);
+         if(indexToRemove > -1){
+           allJobs.splice(indexToRemove,1)
+           console.log("removed")
+         }
+      })
+    }
+    // 5. Save to localStorage
+    // 6. Update UI and close modal
   });
 };
 
 handleManageFormSubmit();
 
 
-    // 3. Create job data object
-
-    // 4. Add new job or update existing
-    // 5. Save to localStorage
-    // 6. Update UI and close modal
   };
 
   handleManageFormSubmit();
