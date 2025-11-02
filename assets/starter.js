@@ -168,39 +168,30 @@ document.addEventListener("DOMContentLoaded", () => {
    * @function validateProfileForm
    * @returns {boolean} True if valid, false otherwise
    */
-  const validateProfileForm = () => {
+  const validateProfileForm = (saveName) => {
     // TODO: Implement profile form validation
     // 1. Check required fields
     // 2. Show errors if invalid
     // 3. Return validation result
-    SaveProfileBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      const pattern = /^[A-Za-z\s]+$/;
 
-      if (profileNameInput.value == "") {
-        formErrors[0].innerHTML = "enter something ";
-        formErrors[0].style.display = "block";
-      } else if (!pattern.test(profileNameInput.value)) {
-        formErrors[0].innerHTML = "name must be contain letters only";
-        formErrors[0].style.display = "block";
-      } else if (profileNameInput.value.length < 4) {
-        formErrors[0].innerHTML = "name short enter a name grater than 4 char ";
-        formErrors[0].style.display = "block";
-      } else {
-        formErrors[0].innerHTML = "";
-        formErrors[0].style.display = "none";
-      }
-      console.log(formErrors);
+    const pattern = /^[A-Za-z\s]+$/;
 
-      if (profilePositionInput == "") {
-        formErrors[1].innerHTML = "require fieldes";
-        formErrors[1].style.display = "block";
-      }
-    });
-    console.log("error", formErrors[1]);
-    // return true;
+    if (saveName == "") {
+      formErrors[0].innerHTML = "enter something ";
+      formErrors[0].style.display = "block";
+    } else if (!pattern.test(saveName)) {
+      formErrors[0].innerHTML = "name must be contain letters only";
+      formErrors[0].style.display = "block";
+    } else if (saveName.length < 4) {
+      formErrors[0].innerHTML = "name short enter a name grater than 4 char ";
+      formErrors[0].style.display = "block";
+    } else {
+      formErrors[0].innerHTML = "";
+      formErrors[0].style.display = "none";
+    }
+
+    handleProfileSave(formErrors[0]);
   };
-  validateProfileForm();
 
   /**
    * Validates the job management form
@@ -242,10 +233,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const renderProfileSkills = () => {
     // TODO: Implement skills rendering
     // Use this HTML template for each skill:
-    // `<li class="profile-skill-tag" data-skill="${skill}">
-    //     <span>${skill}</span>
-    //     <button class="profile-skill-remove" aria-label="Remove skill ${skill}">✕</button>
-    //  </li>`
+    profileSkillsList.innerHTML = "";
+    userProfile.skills.forEach((skill) => {
+      profileSkillsList.innerHTML += `<li class="profile-skill-tag" data-skill="${skill}">
+           <span>${skill}</span>
+           <button class="profile-skill-remove" aria-label="Remove skill ${skill}">✕</button>
+        </li>`;
+    });
+    const skillRemoveBtn = document.querySelectorAll(".profile-skill-remove");
+    skillRemoveBtn.forEach((btnRemove) => {
+      btnRemove.addEventListener("click", (e) => {
+        e.preventDefault();
+        const skillRemoveId = e.target.parentElement.getAttribute("data-skill");
+        userProfile.skills = userProfile.skills.filter(
+          (skill) => skill !== skillRemoveId
+        );
+        console.log("Removed:", skillRemoveId);
+        console.log("Updated skills:", userProfile.skills);
+        // console.log("removed", skillToRemove);
+        renderProfileSkills();
+      });
+    });
   };
 
   /**
@@ -261,13 +269,34 @@ document.addEventListener("DOMContentLoaded", () => {
    * @function handleProfileSave
    * @param {Event} e - Form submit event
    */
-  const handleProfileSave = (e) => {
+  const handleProfileSave = (formErrors) => {
     // TODO: Implement profile save logic
     // 1. Prevent default form submission
     // 2. Validate form
     // 3. Save profile data
     // 4. Update filters if needed
+
+    SaveProfileBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const saveName = profileNameInput.value;
+      const saveSkills = skillInput.value.trim();
+      const savePosition = profilePositionInput.value;
+      validateProfileForm(saveName, savePosition, saveSkills);
+
+      if (formErrors.style.display == "none") {
+        userProfile.name = saveName;
+        userProfile.position = savePosition;
+        if (saveSkills && !userProfile.skills.includes(saveSkills)) {
+          userProfile.skills.push(saveSkills);
+        }
+        saveSkills.value = "";
+        console.log(userProfile);
+      }
+      renderProfileSkills();
+    });
   };
+  handleProfileSave();
 
   /**
    * Handles adding new skills
@@ -332,30 +361,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const renderFavoriteJobs = () => {
     // TODO: Implement favorites rendering
     // 1. Filter jobs by favorite IDs
-    // const favIcon = jobCard.forEach( job => {
-    //   job.target.data-job-id ;
-
-    //   console.log(favIcon)
-    // })
-    // console.log(favoriteJobBtn)
-    //  favoriteJobBtn.forEach(favBtn => {
-    // console.log(favoriteJobBtn)
-    // if (favoriteJobIds.length === 0) {
-    //   favoriteJobsContainer.innerHTML = `<p style = "text-align :center; color :red ;">There is No jobs in Favourit</p>`;
-
-    // }else{
-    //   // favoriteJobsContainer.innerHTML = ""
-    // }
 
     for (let btn of favoriteJobBtn) {
       //  console.log("fav id " , favIcon)
+
       btn.addEventListener("click", (e) => {
-        let jobId = Number(e.target.getAttribute("data-job-id"));
+        jobId = Number(e.target.getAttribute("data-job-id"));
         toggleFavorite(jobId, e.target);
+        renderFavoritesCount();
       });
     }
-
-    renderFavoritesCount();
   };
   // 2. Use createJobCardHTML for each job
   // 3. Show empty message if no favorites
@@ -376,26 +391,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const idIndex = favoriteJobIds.indexOf(jobId);
 
+    button.classList.toggle("job-card__favorite-btn--active");
     if (idIndex > -1) {
-      button.classList.remove("job-card__favorite-btn--active");
+      // button.classList.remove("job-card__favorite-btn--active");
       favoriteJobIds.splice(idIndex, 1);
-      const jobToremove = favoriteJobsContainer.querySelector(
-        `[data-job-id ="${jobId}"]`
-      );
-      jobToremove.remove();
-    }
-    // console.log("to remove", jobtoremove);
-    else {
-      favoriteJobIds.push(jobId);
-      button.classList.add("job-card__favorite-btn--active");
 
-      favoriteJobsContainer.innerHTML = favoriteJobIds
-        .map((jobId) => {
-          const job = allJobs.find((job) => job.id === jobId);
-          return createJobCardHTML(job);
-        })
-        .join("");
+      const removeJob = favoriteJobsContainer.querySelector(
+        `[data-job-id="${jobId}"]`
+      );
+      if (removeJob) {
+        removeJob.remove();
+        return;
+      }
+      console.log("job id  removed", jobId);
+      console.log("DELETED");
+    } else {
+      favoriteJobIds.push(jobId);
+      console.log("ADD");
     }
+    const favoritJob = allJobs.filter((job) => favoriteJobIds.includes(job.id));
+    favoriteJobsContainer.innerHTML = favoritJob
+      .map((job) => {
+        return createJobCardHTML(job);
+      })
+      .join("");
 
     console.log(favoriteJobIds);
     renderFavoritesCount();
@@ -642,7 +661,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ? jobsToRender.map(createJobCardHTML).join("")
         : '<p class="job-listings__empty">No jobs match your search.</p>';
     renderFavoriteJobs();
-    renderStats()
+    renderStats();
   };
 
   /**
@@ -664,13 +683,12 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {number} matchCount - Number of matching jobs
    * @param {number} totalCount - Total number of jobs
    */
-  const renderStats = (matchCount, totalCount) => {
+  const renderStats = (matchCount = 0, totalCount) => {
     // TODO: Implement stats rendering
     // Show different messages based on active filters
 
-  
-   totalCount = allJobs.length
-   
+    totalCount = allJobs.length;
+
     console.log(" match", matchCount);
     console.log(" total ", totalCount);
 
@@ -692,6 +710,10 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", (e) => {
       const inputValue = e.target.value;
 
+      if (inputValue === "") {
+        renderStats(0, allJobs.length);
+        return;
+      }
       // let jobs = allJobs.json();
       const finded = allJobs.filter(
         (item) =>
@@ -704,9 +726,9 @@ document.addEventListener("DOMContentLoaded", () => {
       //   console.log("jobs", allJobs);
       //   console.log("find ", finded);
       // console.log("matched" , matchCount)
-      
+
       renderJobs(finded);
-      const matchCount = finded.length;
+      let matchCount = finded.length;
       renderStats(matchCount);
     });
     // renderFavoriteJobs()
