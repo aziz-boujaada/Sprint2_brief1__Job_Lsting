@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM Elements - Job Management
   const manageJobsList = document.getElementById("manage-jobs-list");
   const addNewJobBtn = document.getElementById("add-new-job-btn");
+  
 
   // DOM Elements - View Modal
   const viewModal = document.getElementById("job-modal");
@@ -465,7 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {number} jobId - Job ID to display
    */
   const openViewModal = (jobId) => {
-    const job = allJobs.find((j) => j.id === jobId);
+    const job = allJobs.find((j) => j.id === Number(jobId));
     if (job) {
       document.getElementById("modal-logo").src =
         job.logo ||
@@ -481,10 +482,18 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("modal-tags").innerHTML = tags
         .map((tag) => `<span class="job-card__tag">${tag}</span>`)
         .join("");
-      viewModal.style.display = "flex";
+
+      viewModal.style.display = "block";
+    }
+
+    for (let card of jobCard) {
+      card.addEventListener("click", (e) => {
+        jobId = Number(e.target.getAttribute("data-job-id"));
+        console.log(jobId);
+        openViewModal(jobId);
+      });
     }
   };
-
   /**
    * Closes job details modal
    * @function closeViewModal
@@ -540,14 +549,14 @@ document.addEventListener("DOMContentLoaded", () => {
    * Renders job management list
    * @function renderManageList
    */
-  const renderManageList = () => {
+  const renderManageList = (dataJob) => {
     // TODO: Implement manage list rendering
     // Use this HTML template for each job:
-    `<li class="manage-job-item" data-job-id="${job.id}">
-        <img src="${job.logo}" alt="" class="job-card__logo" style="position: static; width: 48px; height: 48px; border-radius: 5px;">
+        manageJobsList.innerHTML +=   `<li class="manage-job-item" data-job-id="${dataJob.id}">
+        <img src="${dataJob.logo}" alt="" class="job-card__logo" style="position: static; width: 48px; height: 48px; border-radius: 5px;">
         <div class="manage-job-item__info">
-            <h4>${job.position}</h4>
-            <p>${job.company} - ${job.location}</p>
+            <h4>${dataJob.position}</h4>
+            <p>${dataJob.company} - ${dataJob.location}</p>
         </div>
         <div class="manage-job-item__actions">
             <button class="btn btn--secondary btn-edit">Edit</button>
@@ -564,14 +573,84 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleManageFormSubmit = (e) => {
     // TODO: Implement job save logic
     // 1. Prevent default submission
-    e.preventDefault();
     // 2. Validate form
+let jobAddedId = 0;
+
+const handleManageFormSubmit = () => {
+  const saveJobBtn = document.getElementById("save-job-btn");
+
+  saveJobBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const CompanyName = jobCompanyInput.value.trim();
+    const jobPosition = jobPositionInput.value.trim();
+    const jobLogo = jobLogoInput.value.trim();
+    const jobContract = jobContractInput.value.trim();
+    const jobLocation = jobLocationInput.value.trim();
+    const jobRole = jobRoleInput.value.trim();
+    const jobLevel = jobLevelInput.value.trim();
+    const jobSkills = jobSkillsInput.value.trim();
+    const jobDescription = jobDescriptionInput.value.trim();
+
+    let isValid = true;
+
+    if (CompanyName === "") { jobCompanyInput.classList.add("has-error"); isValid = false; } 
+    else { jobCompanyInput.classList.remove("has-error"); }
+
+    if (jobPosition === "") { jobPositionInput.classList.add("has-error"); isValid = false; } 
+    else { jobPositionInput.classList.remove("has-error"); }
+
+    if (jobContract === "") { jobContractInput.classList.add("has-error"); isValid = false; } 
+    else { jobContractInput.classList.remove("has-error"); }
+
+    if (jobLocation === "") { jobLocationInput.classList.add("has-error"); isValid = false; } 
+    else { jobLocationInput.classList.remove("has-error"); }
+
+    if (jobRole === "") { jobRoleInput.classList.add("has-error"); isValid = false; } 
+    else { jobRoleInput.classList.remove("has-error"); }
+
+    if (jobLevel === "") { jobLevelInput.classList.add("has-error"); isValid = false; } 
+    else { jobLevelInput.classList.remove("has-error"); }
+
+    if (jobSkills === "") { jobSkillsInput.classList.add("has-error"); isValid = false; } 
+    else { jobSkillsInput.classList.remove("has-error"); }
+
+    if (jobDescription === "") { jobDescriptionInput.classList.add("has-error"); isValid = false; } 
+    else { jobDescriptionInput.classList.remove("has-error"); }
+
+    if (!isValid) return;
+
+    const dataJob = {
+      id: jobAddedId + 1,
+      company: CompanyName,
+      position: jobPosition,
+      logo: jobLogo,
+      contract: jobContract,
+      location: jobLocation,
+      role: jobRole,
+      level: jobLevel,
+      skills: jobSkills,
+      description: jobDescription,
+    };
+     renderManageList(dataJob)
+
+
+    console.log(dataJob);
+    
+  });
+};
+
+handleManageFormSubmit();
+
 
     // 3. Create job data object
+
     // 4. Add new job or update existing
     // 5. Save to localStorage
     // 6. Update UI and close modal
   };
+
+  handleManageFormSubmit();
 
   /**
    * Handles manage list clicks (edit/delete)
